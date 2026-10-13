@@ -172,6 +172,7 @@
         </div>
 
         <form class="contact-form" id="contact-form" novalidate>
+          <input class="botcheck" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="field">
             <label for="f-name">Your name</label>
             <input id="f-name" name="name" type="text" autocomplete="name" required>
@@ -206,7 +207,7 @@
           </div>
           <p class="form-error" id="form-error" role="alert" hidden></p>
           <button class="btn btn-primary" type="submit">Send booking request</button>
-          <p class="form-note" id="form-note" hidden>This opens a pre-filled email in your mail app.</p>
+          <p class="form-note">Dean will reply to the email address you enter.</p>
         </form>
       </div>
     </section>

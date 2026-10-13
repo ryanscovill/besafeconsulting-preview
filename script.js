@@ -1,11 +1,17 @@
-// Booking form: no server, so build a pre-filled email instead.
+// Booking form: sent through Web3Forms, which emails Dean. His address
+// never appears on the site. The access key is meant to be public.
+const WEB3FORMS_ACCESS_KEY = ""; // paste Dean's key here to turn the form on
+
 const form = document.getElementById("contact-form");
 const errorBox = document.getElementById("form-error");
-// Set this to Dean's booking address to turn on email requests.
-const BOOKING_EMAIL = "";
-if (BOOKING_EMAIL) document.getElementById("form-note").hidden = false;
+const submitButton = form.querySelector('button[type="submit"]');
 
-form.addEventListener("submit", (event) => {
+function showError(message) {
+  errorBox.textContent = message;
+  errorBox.hidden = false;
+}
+
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const required = [...form.querySelectorAll("[required]")];
@@ -16,29 +22,52 @@ form.addEventListener("submit", (event) => {
     missing.forEach((el) => el.setAttribute("aria-invalid", "true"));
     const names = missing.map((el) => el.name);
     const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : names[0];
-    errorBox.textContent = `Add your ${list} so Dean can reply.`;
-    errorBox.hidden = false;
+    showError(`Add your ${list} so Dean can reply.`);
     missing[0].focus();
     return;
   }
   errorBox.hidden = true;
 
-  if (!BOOKING_EMAIL) {
-    errorBox.textContent = "Online booking isn't connected yet. Please check back soon.";
-    errorBox.hidden = false;
+  if (!WEB3FORMS_ACCESS_KEY) {
+    showError("Online booking isn't connected yet. Please check back soon.");
     return;
   }
 
   const data = new FormData(form);
-  const subject = `Course booking request: ${data.get("course")}`;
-  const lines = [`Name: ${data.get("name")}`, `Email: ${data.get("email")}`];
-  if (data.get("organization")) lines.push(`Organization: ${data.get("organization")}`);
-  lines.push(`Course: ${data.get("course")}`);
-  if (data.get("size")) lines.push(`Number of people: ${data.get("size")}`);
-  if (data.get("message")) lines.push("", data.get("message"));
-  const body = lines.join("\n");
+  if (data.get("botcheck")) return; // only bots fill in the hidden field
 
-  window.location.href = `mailto:${BOOKING_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  data.set("access_key", WEB3FORMS_ACCESS_KEY);
+  data.set("subject", `Course booking request: ${data.get("course")}`);
+  data.set("from_name", "Be Safe Consulting website");
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Sending…";
+
+  try {
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: data,
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.success) throw new Error(result.message || response.statusText);
+
+    const done = document.createElement("div");
+    done.className = "form-done";
+    done.setAttribute("role", "status");
+    done.tabIndex = -1;
+    const heading = document.createElement("h3");
+    heading.textContent = "Booking request sent";
+    const text = document.createElement("p");
+    text.textContent = `Thanks, ${data.get("name")}. Dean will reply to ${data.get("email")} with available dates and pricing.`;
+    done.append(heading, text);
+    form.replaceChildren(done);
+    done.focus();
+  } catch {
+    showError("Your request didn't send. Please try again in a few minutes.");
+    submitButton.disabled = false;
+    submitButton.textContent = "Send booking request";
+  }
 });
 
 document.getElementById("year").textContent = new Date().getFullYear();
