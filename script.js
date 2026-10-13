@@ -1,6 +1,6 @@
 // Booking form: sent through Web3Forms, which emails Dean. His address
 // never appears on the site. The access key is meant to be public.
-const WEB3FORMS_ACCESS_KEY = ""; // paste Dean's key here to turn the form on
+const WEB3FORMS_ACCESS_KEY = "f161c864-0764-41d4-8c21-c940c65a2c3e";
 
 const form = document.getElementById("contact-form");
 const errorBox = document.getElementById("form-error");
