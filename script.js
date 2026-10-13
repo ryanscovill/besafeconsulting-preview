@@ -1,7 +1,9 @@
 // Booking form: no server, so build a pre-filled email instead.
 const form = document.getElementById("contact-form");
 const errorBox = document.getElementById("form-error");
-const BOOKING_EMAIL = "info@besafeconsulting.ca";
+// Set this to Dean's booking address to turn on email requests.
+const BOOKING_EMAIL = "";
+if (BOOKING_EMAIL) document.getElementById("form-note").hidden = false;
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -20,6 +22,12 @@ form.addEventListener("submit", (event) => {
     return;
   }
   errorBox.hidden = true;
+
+  if (!BOOKING_EMAIL) {
+    errorBox.textContent = "Online booking isn't connected yet. Please check back soon.";
+    errorBox.hidden = false;
+    return;
+  }
 
   const data = new FormData(form);
   const subject = `Course booking request: ${data.get("course")}`;
