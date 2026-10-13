@@ -399,6 +399,16 @@ a:hover { color: var(--deep); }
 }
 .quote footer { color: var(--muted); font-size: 0.95rem; }
 
+.portrait {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  height: auto;
+  margin-bottom: 2.5rem;
+  border-radius: 4px;
+  border-bottom: 6px solid var(--potable);
+}
+
 .about-side h3 {
   font-size: 1.5rem;
   font-weight: 600;
