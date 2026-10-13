@@ -132,7 +132,7 @@ a:hover { color: var(--deep); }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 17rem;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: clamp(2rem, 6vw, 5rem);
   align-items: end;
 }
@@ -157,21 +157,22 @@ a:hover { color: var(--deep); }
 
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
-/* Staff gauge: the hero's one moment of motion */
+/* Hero visual: Dean in front of a staff gauge as the water rises.
+   Everything is sized in em so one font-size scales the whole scene. */
 
-.gauge-mount {
+.hero-visual {
   position: relative;
-  height: 32rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
+  width: 25em;
+  height: 34em;
 }
 
 .gauge {
-  position: relative;
-  width: 6.5rem;
-  height: 28rem;
-  margin-bottom: 1.5rem;
+  position: absolute;
+  right: 0;
+  bottom: 1.5em;
+  z-index: 1;
+  width: 6.5em;
+  height: 28em;
   background: #fbfdfd;
   border-radius: 3px;
   box-shadow: 0 0 0 6px rgb(255 255 255 / 0.06);
@@ -183,15 +184,15 @@ a:hover { color: var(--deep); }
   position: absolute;
   left: 50%;
   bottom: 100%;
-  width: 0.6rem;
-  height: 10rem;
+  width: 0.6em;
+  height: 10em;
   transform: translateX(-50%);
   background: rgb(255 255 255 / 0.12);
 }
 
 .gauge-face {
   position: absolute;
-  inset: 0.5rem 0.4rem;
+  inset: 0.5em 0.4em;
   display: grid;
   grid-template-rows: repeat(20, 1fr);
 }
@@ -207,8 +208,8 @@ a:hover { color: var(--deep); }
   width: 48%;
   background: repeating-linear-gradient(to bottom, #12262e 0 20%, transparent 20% 40%);
 }
-.dm.l::before { left: 0; border-left: 4px solid #12262e; }
-.dm.r::before { right: 0; border-right: 4px solid #12262e; }
+.dm.l::before { left: 0; border-left: 0.25em solid #12262e; }
+.dm.r::before { right: 0; border-right: 0.25em solid #12262e; }
 
 .dm b {
   position: absolute;
@@ -216,27 +217,43 @@ a:hover { color: var(--deep); }
   transform: translateY(-50%);
   font-family: var(--display);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.95em;
   color: #b8322a;
 }
 .dm.l b { right: 6%; }
 .dm.r b { left: 6%; }
 
-.gauge-water {
+/* the hero's one moment of motion */
+.water {
   position: absolute;
-  left: -6rem;
-  right: -6rem;
-  bottom: -1.5rem;
-  height: calc(58% + 1.5rem);
+  left: -5em;
+  right: -5em;
+  bottom: 0;
+  z-index: 2;
+  height: 17.5em;
   background: linear-gradient(to bottom, rgb(84 170 220 / 0.55), rgb(18 88 128 / 0.92));
   border-top: 2px solid rgb(220 240 250 / 0.85);
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 25%, #000 75%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 25%, #000 75%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 18%, #000 85%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 18%, #000 85%, transparent);
   animation: fill 2.4s cubic-bezier(0.22, 0.8, 0.3, 1) 0.3s both;
 }
 
 @keyframes fill {
-  from { height: 6%; }
+  from { height: 2em; }
+}
+
+.hero-portrait {
+  position: absolute;
+  left: 0;
+  bottom: 3em;
+  z-index: 3;
+  width: 16.5em;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 30%;
+  border-radius: 4px;
+  box-shadow: 0 1.5em 3em -1em rgb(3 20 28 / 0.6);
 }
 
 /* Buttons */
@@ -521,7 +538,14 @@ textarea:focus-visible { outline-offset: 0; border-color: var(--potable); }
 
 /* Responsive */
 
+@media (max-width: 1100px) {
+  .hero-visual { font-size: 0.85rem; }
+}
+
 @media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 0; }
+  .hero-copy { padding-bottom: 1rem; }
+  .hero-visual { font-size: 0.85rem; margin-left: auto; margin-right: auto; }
   .tracks,
   .about-grid,
   .contact-grid { grid-template-columns: 1fr; }
@@ -532,12 +556,7 @@ textarea:focus-visible { outline-offset: 0; border-color: var(--potable); }
   .nav a:not(.nav-cta) { display: none; }
   .brand { font-size: 1.3rem; }
 
-  .hero-grid { grid-template-columns: 1fr; gap: 0; }
-  .hero-copy { padding-bottom: 1rem; }
-  .gauge-mount { height: 17rem; }
-  .gauge { width: 4.5rem; height: 14rem; }
-  .gauge::before { height: 3rem; }
-  .dm b { font-size: 0.75rem; }
+  .hero-visual { font-size: 0.68rem; }
 
   .water-list { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: 1fr; gap: 0; }
@@ -546,5 +565,5 @@ textarea:focus-visible { outline-offset: 0; border-color: var(--potable); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .gauge-water { animation: none; }
+  .water { animation: none; }
 }
